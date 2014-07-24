@@ -40,5 +40,5 @@ asyncFn = group.wrap(function() {
 	console.log('I was called')
 });
 
-group.wrap(asyncFn)
+setTimeout(asyncFn);
 ```
