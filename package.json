@@ -1,6 +1,6 @@
 {
   "name": "groups",
-  "description": "Higher-order functions and common patterns for asynchronous code",
+  "description": "Organize asynchronous code with groups",
   "main": "./lib/groups",
   "author": {
     "name": "Jermel Washington"
