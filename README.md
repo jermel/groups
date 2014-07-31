@@ -24,7 +24,7 @@ To use Groups one must `require('groups')([options])`. This returns a factory fo
 Creates a new `Group`
 
 ###Group
-Object that can wrap asynchronous callbacks other groups together.
+Object that can wrap asynchronous callbacks and other groups together.
 
 Each group is an EventEmitter with the following events:
 - `done` group completed without errors
@@ -40,5 +40,5 @@ asyncFn = group.bind(function() {
 	console.log('I was called')
 });
 
-group.bind(asyncFn)
+setTimeout(asyncFn)
 ```
