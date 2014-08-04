@@ -2,10 +2,11 @@
   "name": "groups",
   "description": "Organize asynchronous code with groups",
   "main": "./lib/groups",
+  "keywords": [],
   "author": {
     "name": "Jermel Washington"
   },
-  "version": "0.0.1",
+  "version": "0.1.0-0.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/jermel/groups.git"
@@ -18,5 +19,9 @@
       "type": "MIT",
       "url": "https://github.com/jermel/groups/raw/master/LICENSE"
     }
-  ]
+  ],
+  "devDependencies": {
+    "mocha": "^1.2.3",
+    "chai": "^1.9.1"
+  }
 }
