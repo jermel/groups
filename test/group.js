@@ -10,8 +10,9 @@ describe('test/group', function() {
                     count++;
                 });
 
-            group.on('done', function () {
+            group.on('done', function (err) {
                 expect(count).to.equal(1);
+                expect(err).to.equal(undefined);
                 done();
             });
             setTimeout(f1);
@@ -28,14 +29,16 @@ describe('test/group', function() {
                 count = 0;
 
             group1.bind(group2);
-            group1.on('done', function () {
+            group1.on('done', function (err) {
                 count++;
                 expect(count).to.equal(2);
+                expect(err).to.equal(undefined);
                 done();
             });
-            group2.on('done', function () {
+            group2.on('done', function (err) {
                 count++;
                 expect(count).to.equal(1);
+                expect(err).to.equal(undefined);
             });
         });
 
@@ -46,13 +49,15 @@ describe('test/group', function() {
                 count = 0;
 
             group1.bind(group2);
-            group2.on('done', function () {
+            group2.on('done', function (err) {
                 count++;
                 expect(count).to.equal(1);
+                expect(err).to.equal(undefined);
             });
-            group1.on('done', function () {
+            group1.on('done', function (err) {
                 count++;
                 expect(count).to.equal(2);
+                expect(err).to.equal(undefined);
                 done();
             });
         });
@@ -65,14 +70,16 @@ describe('test/group', function() {
                 f2 = group2.bind(function() {});
 
             group1.bind(group2);
-            group1.on('done', function () {
+            group1.on('done', function (err) {
                 count++;
                 expect(count).to.equal(2);
+                expect(err).to.equal(undefined);
                 done();
             });
-            group2.on('done', function () {
+            group2.on('done', function (err) {
                 count++;
                 expect(count).to.equal(1);
+                expect(err).to.equal(undefined);
             });
             setTimeout(f2);
         });
@@ -86,14 +93,16 @@ describe('test/group', function() {
 
             group1.bind(group2);
             group1.bind(group2);
-            group1.on('done', function () {
+            group1.on('done', function (err) {
                 count++;
                 expect(count).to.equal(2);
+                expect(err).to.equal(undefined);
                 done();
             });
-            group2.on('done', function () {
+            group2.on('done', function (err) {
                 count++;
                 expect(count).to.equal(1);
+                expect(err).to.equal(undefined);
             });
             setTimeout(f2);
         });
@@ -105,7 +114,8 @@ describe('test/group', function() {
                 f1 = group.bind(function() { count++; }),
                 f2 = group.bind(f1);
 
-            group.on('done', function () {
+            group.on('done', function (err) {
+                expect(err).to.equal(undefined);
                 expect(count).to.equal(2);
                 done();
             });
@@ -120,10 +130,7 @@ describe('test/group', function() {
                 f1 = group.bind(function() { throw 'error'; }),
                 f2 = group.bind(f1);
 
-            group.on('done', function() { 
-                throw 'Done should not get called';
-            });
-            group.on('error', function (errors) {
+            group.on('done', function (errors) {
                 expect(errors.length).to.equal(2);
                 done();
             });
@@ -140,12 +147,14 @@ describe('test/group', function() {
                 f2 = group2.bind(function() {});
 
             group1.bind(group2);
-            group1.on('done', function () {
+            group1.on('done', function (err) {
+                expect(err).to.equal(undefined);
                 count++;
                 expect(count).to.equal(2);
                 done();
             });
-            group2.on('done', function () {
+            group2.on('done', function (err) {
+                expect(err).to.equal(undefined);
                 count++;
                 expect(count).to.equal(1);
             });
@@ -161,10 +170,7 @@ describe('test/group', function() {
                 f1 = group.bind(function(){ throw 'error' });
                 setTimeout(f1);
 
-            group.on('done', function() { 
-                throw 'Done should not get called';
-            });
-            group.on('error', function(errors) {
+            group.on('done', function(errors) {
                 expect(errors.length).to.equal(1);
                 expect(errors[0].message).to.equal('error');
                 done();
@@ -179,10 +185,7 @@ describe('test/group', function() {
             setTimeout(f1);
             setTimeout(f2);
 
-            group.on('done', function() { 
-                throw 'Done should not get called';
-            });
-            group.on('error', function(errors) {
+            group.on('done', function(errors) {
                 expect(errors.length).to.equal(2);
                 expect(errors[0].message).to.equal('error1');
                 expect(errors[1].message).to.equal('error2');
@@ -200,20 +203,14 @@ describe('test/group', function() {
             setTimeout(f2);
 
             group.bind(group2);
-            group.on('done', function() { 
-                throw 'Done should not get called';
-            });
-            group.on('error', function(errors) {
+            group.on('done', function(errors) {
                 expect(errors.length).to.equal(2);
                 expect(errors[0].message).to.equal('error1');
                 expect(errors[1].message).to.equal('error2');
                 done();
             });
 
-            group2.on('done', function() { 
-                throw 'Done should not get called';
-            });
-            group2.on('error', function(errors) {
+            group2.on('done', function(errors) {
                 expect(errors.length).to.equal(1);
                 expect(errors[0].message).to.equal('error2');
             });

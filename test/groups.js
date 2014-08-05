@@ -50,10 +50,7 @@ describe('test/groups', function() {
 			f1 = group.wrap(function(){ called = true; });
 			setTimeout(f1, max + 50);
 
-			group.on('done', function() { 
-				throw 'Done should not get called';
-			});
-			group.on('error', function(errors) {
+			group.on('done', function(errors) {
 				expect(errors.length).to.equal(1);
 				expect(errors[0].message).to.equal('GroupTimeout');
 
