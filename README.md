@@ -33,7 +33,7 @@ Each group is an EventEmitter with the following event:
 The group completed.  If there were errors, an array of errors will be passed as the argument - If this group is not monitoring anything (because everything has completed or nothing has been bound to this group), when a listener is added for the `done` event, it will be emitted immediately.
 
 ####Methods
-The `group` object exposes a `bind` method that can be called with a variety of parameters to support a number of asynchronous error handling styles.
+The `group` object exposes a `bind` method that can be called with a variety of parameters to support a number of asynchronous error handling styles. `options` is an object that supports a single property `thisArg` to use when invoking the bound function
 
 #####group.bind(`function(error, result){}`, [options])
 Error Argument (AKA Node callback)
