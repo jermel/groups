@@ -59,10 +59,50 @@ Exception only
 
 Similar to `Object.bind` this method returns a new function that calls the original function<sup>*</sup>.  The group will monitor this new function for invocations.  Because there is no error handler, exceptions are the only thing that will be treated as an error.
 
+Example
+```
+var group = require('groups').newGroup();
+
+asyncFn = group.bind(function() { console.log('I was called')}, null);
+asyncFn2 = group.bind(function() { console.log('Name is %s', this.name);}, null, {thisArg: {name: 'my name'}});
+
+group.once('done', function() {
+	console.log('Group is done');
+});
+setTimeout(asyncFn)
+setTimeout(asyncFn2)
+```
+
 #####group.bind(group)
 Returns the same group. The bound group will be monitored for completion, and if it completes with an error, the monitoring group will complete with an error.
+
+Example
+```
+var group = require('groups').newGroup(),
+    group2 = require('groups').newGroup();
+
+group.bind(group2);
+
+group.once('done', function() {
+	console.log('Group is done');
+});
+group2.once('done', function() {
+	console.log('Group 2 is done');
+});
+```
 
 #####group.bind(`function success(...){}`, `function failure(...){}`, [options])
 Returns an object `{ success: function(){}, failure: function(){} }` each function will notify the group when it is invoked.  The group will complete with an error if the failure function is called, or if an exception is thrown in the success function.
 
+Example
+```
+var group = require('groups').newGroup(),
+    handlers = group.bind(function success(){}, function failure(){});
+
+group.once('done', function() {
+	console.log('Group is done');
+});
+
+somefunction(handlers.success, handlers.failure)
+```
 <sup>*</sup>A bound function can only be called once.  All other invocations are considered a noop (in reality, they actually log a warning).
