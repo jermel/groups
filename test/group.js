@@ -161,6 +161,34 @@ describe('test/group', function() {
             setTimeout(f1);
             setTimeout(f2, 20);
         });
+
+        it('should bind(fn, fn)', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                msg,
+                f1 = group.bind(function(){ msg = 'success'; }, function(){ msg = 'error'; });
+
+            setTimeout(f1.success);
+            group.on('done', function(errors) {
+                expect(errors).to.equal(undefined);
+                expect(msg).to.equal('success');
+                done(errors);
+            });
+        });
+
+        it('should bind(fn, opts.thisArg)', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                thisArg = {},
+                f1 = group.bind(function(){ this.msg = 'success'; }, { thisArg: thisArg});
+
+            setTimeout(f1);
+            group.on('done', function(errors) {
+                expect(errors).to.equal(undefined);
+                expect(thisArg.msg).to.equal('success');
+                done(errors);
+            });
+        });
     }); // default group
     
     describe('error handling', function() {
@@ -168,11 +196,60 @@ describe('test/group', function() {
             var Groups = require('../lib/groups')(),
                 group = Groups.newGroup(),
                 f1 = group.bind(function(){ throw 'error' });
-                setTimeout(f1);
-
+            
+            setTimeout(f1);
             group.on('done', function(errors) {
                 expect(errors.length).to.equal(1);
                 expect(errors[0].message).to.equal('error');
+                done();
+            });
+        });
+
+        it('bind() emits error on invocation', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                f1 = group.bind();
+
+            setTimeout(f1);
+            group.on('done', function(errors) {
+                expect(errors.length).to.equal(1);
+                done();
+            });
+        });
+
+        it('bind(non-function) emits error on invocation', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                count = 0;
+
+            setTimeout(group.bind()); count++;
+            setTimeout(group.bind(true)); count++;
+            setTimeout(group.bind(false)); count++;
+            setTimeout(group.bind(0)); count++;
+            setTimeout(group.bind(1)); count++;
+            setTimeout(group.bind(null)); count++;
+            setTimeout(group.bind(undefined)); count++;
+            setTimeout(group.bind('')); count++;
+            setTimeout(group.bind('string')); count++;
+            setTimeout(group.bind({})); count++;
+            setTimeout(group.bind([])); count++;
+
+            group.on('done', function(errors) {
+                expect(errors.length).to.equal(count);
+                done();
+            });
+        });
+
+        it('bind(fn, fn) emits error on failure invocation', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                err,
+                f1 = group.bind(function(){}, function(){ err = 'error'; });
+
+            setTimeout(f1.failure);
+            group.on('done', function(errors) {
+                expect(errors.length).to.equal(1);
+                expect(err).to.equal('error');
                 done();
             });
         });

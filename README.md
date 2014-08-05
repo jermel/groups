@@ -35,7 +35,7 @@ The group completed.  If there were errors, an array of errors will be passed as
 ####Methods
 The `group` object exposes a `bind` method that can be called with a variety of parameters to support a number of asynchronous error handling styles.
 
-#####group.bind(`function(error, result)`, [options])
+#####group.bind(`function(error, result){}`, [options])
 Error Argument (AKA Node callback)
 
 Similar to `Object.bind` this method returns a new function that will call the original function<sup>*</sup>.  The group will monitor this new function for invocations.  If the first argument is truthy, it will be treated as an error.  An exception is treated like an error.
@@ -54,15 +54,15 @@ group.once('done', function() {
 setTimeout(asyncFn)
 ```
 
-#####group.bind(`function(...)`, `null|undefined`, [options])
+#####group.bind(`function(...){}`, `null|undefined`, [options])
 Exception only
 
-Similar to `Object.bind` this method returns a new function that will call the original function<sup>*</sup>.  The group will monitor this new function for invocations.  Because there is no error handler, exceptions are the only thing that will be treated as an error.
+Similar to `Object.bind` this method returns a new function that calls the original function<sup>*</sup>.  The group will monitor this new function for invocations.  Because there is no error handler, exceptions are the only thing that will be treated as an error.
 
 #####group.bind(group)
-Returns the same group. Monitor this group for completion.  If the bound group completes with an error, this group will complete with an error.
+Returns the same group. The bound group will be monitored for completion, and if it completes with an error, the monitoring group will complete with an error.
 
 #####group.bind(`function success(...){}`, `function failure(...){}`, [options])
-Returns an object { success: function(){}, failure: function(){} } each callback will notify the group when its done.  The group will complete with an error if the error function is called, or if the success function throws an exception.
+Returns an object `{ success: function(){}, failure: function(){} }` each function will notify the group when it is invoked.  The group will complete with an error if the failure function is called, or if an exception is thrown in the success function.
 
 <sup>*</sup>A bound function can only be called once.  All other invocations are considered a noop (in reality, they actually log a warning).
