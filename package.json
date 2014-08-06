@@ -1,12 +1,15 @@
 {
   "name": "groups",
   "description": "Organize asynchronous code with groups",
+  "version": "0.1.1",
   "main": "./lib/groups",
   "keywords": [],
   "author": {
     "name": "Jermel Washington"
   },
-  "version": "0.1.0",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jermel/groups.git"

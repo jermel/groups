@@ -55,9 +55,9 @@ setTimeout(asyncFn)
 ```
 
 #####group.bind(`function(...){}`, `null|undefined`, [options])
-Exception only
+Exception only (AKA no error handling)
 
-Similar to `Object.bind` this method returns a new function that calls the original function<sup>*</sup>.  The group will monitor this new function for invocations.  Because there is no error handler, exceptions are the only thing that will be treated as an error.
+Similar to `Object.bind` this method returns a new function that calls the original function<sup>*</sup>.  The group will monitor this new function for invocations.  Because there is no error handler, exceptions are the only thing that will be treated as an error when the new function is called<sup>**</sup>.
 
 Example
 ```
@@ -106,3 +106,5 @@ group.once('done', function() {
 somefunction(handlers.success, handlers.failure)
 ```
 <sup>*</sup>A bound function can only be called once.  All other invocations are considered a noop (in reality, they actually log a warning).
+
+<sup>**</sup>When using no error handling, it is not recommended to set a timeout on the group.  This is because there is no reliable way to pass along the timeout error.  In this situation, if the group times out, the callback will be invoked with the timeout error as the only argument.
