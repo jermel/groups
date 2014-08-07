@@ -172,21 +172,7 @@ describe('test/group', function() {
             group.on('done', function(errors) {
                 expect(errors).to.equal(undefined);
                 expect(msg).to.equal('success');
-                done(errors);
-            });
-        });
-
-        it('should bind(fn, opts.thisArg)', function(done) {
-            var Groups = require('../lib/groups')(),
-                group = Groups.newGroup(),
-                thisArg = {},
-                f1 = group.bind(function(){ this.msg = 'success'; }, { thisArg: thisArg});
-
-            setTimeout(f1);
-            group.on('done', function(errors) {
-                expect(errors).to.equal(undefined);
-                expect(thisArg.msg).to.equal('success');
-                done(errors);
+                done();
             });
         });
     }); // default group
@@ -304,6 +290,84 @@ describe('test/group', function() {
                 done();
             });
             group.emit('ping');
+        });
+    });
+
+    describe('options.thisArg', function() {
+        it('should bind(fn, opts.thisArg)', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                thisArg = {},
+                f1 = group.bind(function(){ this.msg = 'success'; }, { thisArg: thisArg});
+
+            setTimeout(f1);
+            group.on('done', function(errors) {
+                expect(errors).to.equal(undefined);
+                expect(thisArg.msg).to.equal('success');
+                done();
+            });
+        });
+        it('should bind(success, fn, opts.thisArg)', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                thisArg = {},
+                f1 = group.bind(function(){ this.msg = 'success'; },
+                    function(){ this.msg = 'failure'; },
+                    { thisArg: thisArg});
+
+            setTimeout(f1.success);
+            group.on('done', function(errors) {
+                expect(errors).to.equal(undefined);
+                expect(thisArg.msg).to.equal('success');
+                done();
+            });
+        });
+        it('should bind(fn, failure, opts.thisArg)', function(done) {
+            var Groups = require('../lib/groups')(),
+                group = Groups.newGroup(),
+                thisArg = {},
+                f1 = group.bind(function(){ this.msg = 'success'; },
+                    function(){ this.msg = 'failure'; },
+                    { thisArg: thisArg});
+
+            setTimeout(f1.failure);
+            group.on('done', function(errors) {
+                expect(errors.length).to.equal(1);
+                expect(thisArg.msg).to.equal('failure');
+                done();
+            });
+        });
+        it('should bind(fn, opts.thisArg) on timeout', function(done) {
+            var max = 10,
+                Groups = require('../lib/groups')({timeout: max}),
+                group = Groups.newGroup(),
+                thisArg = {},
+                f1 = group.bind(function(error){ this.error = error; }, { thisArg: thisArg});
+
+            setTimeout(f1.failure, max + 20);
+            group.on('done', function(errors) {
+                expect(errors.length).to.equal(1);
+                expect(thisArg.error.message).to.equal('GroupTimeout');
+                done();
+            });
+        });
+        it('should bind(fn, failure, opts.thisArg) on timeout', function(done) {
+            var max = 1,
+                Groups = require('../lib/groups')({timeout: max,
+                    logger: { warn: function() {} }
+                }),
+                group = Groups.newGroup(),
+                thisArg = {},
+                f1 = group.bind(function(){ this.msg = 'success'; },
+                    function(error){ this.error = error; },
+                    { thisArg: thisArg});
+
+            setTimeout(f1.success, max + 20);
+            group.on('done', function(errors) {
+                expect(errors.length).to.equal(1);
+                expect(thisArg.error.message).to.equal('GroupTimeout');
+                done();
+            });
         });
     });
 });
