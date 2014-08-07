@@ -42,19 +42,51 @@ describe('test/groups', function() {
     describe('timed group factory', function() {
         it('should use timeout', function(done) {
         	var max = 20,
-			timedGroups = require('../lib/groups')({
-				timeout: max
-			}),
-			group = timedGroups.newGroup(),
-			called = false,
-			f1 = group.wrap(function(){ called = true; });
+				timedGroups = require('../lib/groups')({
+					timeout: max
+				}),
+				group = timedGroups.newGroup(),
+				called = false,
+				f1 = group.wrap(function(){ called = true; });
 			setTimeout(f1, max + 50);
 
 			group.on('done', function(errors) {
 				expect(errors.length).to.equal(1);
 				expect(errors[0].message).to.equal('GroupTimeout');
+				done();
+			});
+        });
 
+        it('should timeout with group', function(done) {
+        	var max = 20,
+				timedGroups = require('../lib/groups')({
+					timeout: max
+				}),
+				group = timedGroups.newGroup(),
+				group2 = require('../lib/groups')().newGroup(),
+				called = false,
+				called2 = false,
+				calledTimeout = false,
+				f1 = group.bind(function(){ called = true; }),
+				f2 = group.bind(function(){ called2 = true; });
+
+			group2.bind(group);
+			setTimeout(f1, max + 20);
+			setTimeout(f2, max + 30);
+
+			group.on('done', function(errors) {
+				calledTimeout = true;
+				expect(errors.length).to.equal(2);
+				expect(called).to.equal(true);
+				expect(errors[0].message).to.equal('GroupTimeout');
+				expect(errors[1].message).to.equal('GroupTimeout');
+			});
+			group2.on('done', function(errors) {
 				expect(errors.length).to.equal(1);
+				expect(called2).to.equal(true);
+				expect(calledTimeout).to.equal(true);
+				expect(errors[0].message).to.equal('GroupError');
+				expect(errors[0].cause.length).to.equal(2);
 				done();
 			});
         });

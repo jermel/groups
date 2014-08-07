@@ -283,7 +283,8 @@ describe('test/group', function() {
             group.on('done', function(errors) {
                 expect(errors.length).to.equal(2);
                 expect(errors[0].message).to.equal('error1');
-                expect(errors[1].message).to.equal('error2');
+                expect(errors[1].message).to.equal('GroupError');
+                expect(errors[1].cause[0].message).to.equal('error2');
                 done();
             });
 
