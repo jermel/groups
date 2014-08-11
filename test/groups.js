@@ -52,7 +52,7 @@ describe('test/groups', function() {
 
 			group.on('done', function(errors) {
 				expect(errors.length).to.equal(1);
-				expect(errors[0].message).to.equal('GroupTimeout');
+				expect(errors[0].message).to.equal('GroupTimeoutError');
 				done();
 			});
         });
@@ -78,8 +78,8 @@ describe('test/groups', function() {
 				calledTimeout = true;
 				expect(errors.length).to.equal(2);
 				expect(called).to.equal(true);
-				expect(errors[0].message).to.equal('GroupTimeout');
-				expect(errors[1].message).to.equal('GroupTimeout');
+				expect(errors[0].message).to.equal('GroupTimeoutError');
+				expect(errors[1].message).to.equal('GroupTimeoutError');
 			});
 			group2.on('done', function(errors) {
 				expect(errors.length).to.equal(1);

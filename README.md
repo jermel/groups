@@ -1,4 +1,4 @@
-# groups
+# groups.js
 Organize asynchronous code with groups
 
 

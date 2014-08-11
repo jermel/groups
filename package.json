@@ -1,7 +1,7 @@
 {
   "name": "groups",
   "description": "Organize asynchronous code with groups",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "./lib/groups",
   "keywords": [],
   "author": {
